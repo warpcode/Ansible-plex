@@ -1,0 +1,47 @@
+---
+- name: Gather OS Specific Variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+    - "defaults.yml"
+
+- block:
+    - name: Checking repository key
+      apt_key:
+        url: "https://downloads.plex.tv/plex-keys/PlexSign.key"
+        state: present
+    - name: Checking repository
+      apt_repository:
+        repo: deb https://downloads.plex.tv/repo/deb/ public main
+        state: present
+        filename: 'plexmediaserver'
+        update_cache: true
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure Plex dependencies are installed
+  package: name={{ item }} state=present
+  with_items: "{{ _plex_dependencies }}"
+
+- name: Install Plex
+  package: name={{ _plex_package_name }} state={{plex_state}}
+
+- name: Ensure Plex is running
+  service: name="{{ _plex_service_name }}" state="{{ plex_service_state }}"
+
+- name: Installing XBMC NFO Movie Importer
+  git:
+      repo: https://github.com/gboudreau/XBMCnfoMoviesImporter.bundle.git
+      dest: "{{ _plex_plugins_dir }}/XBMCnfoMoviesImporter.bundle"
+  when: plex_nfo_plugins
+  notify:
+      - Restart Plex
+
+- name: Installing XBMC NFO TV Importer
+  git:
+      repo: https://github.com/gboudreau/XBMCnfoTVImporter.bundle.git
+      dest: "{{ _plex_plugins_dir }}/XBMCnfoTVImporter.bundle"
+  when: plex_nfo_plugins
+  notify:
+      - Restart Plex

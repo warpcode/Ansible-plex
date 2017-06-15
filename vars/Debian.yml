@@ -1,0 +1,7 @@
+---
+    _plex_dependencies:
+        - git
+
+    _plex_plugins_dir: /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/
+    _plex_service_name: plexmediaserver
+    _plex_package_name: plexmediaserver

@@ -1,0 +1,4 @@
+---
+- name: Restart Plex
+  service: name={{_plex_service_name}} state=restarted
+  become: yes
