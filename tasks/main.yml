@@ -28,19 +28,3 @@
 
 - name: Ensure Plex is running
   service: name="{{ _plex_service_name }}" state="{{ plex_service_state }}"
-
-- name: Installing XBMC NFO Movie Importer
-  git:
-      repo: https://github.com/gboudreau/XBMCnfoMoviesImporter.bundle.git
-      dest: "{{ _plex_plugins_dir }}/XBMCnfoMoviesImporter.bundle"
-  when: plex_nfo_plugins
-  notify:
-      - Restart Plex
-
-- name: Installing XBMC NFO TV Importer
-  git:
-      repo: https://github.com/gboudreau/XBMCnfoTVImporter.bundle.git
-      dest: "{{ _plex_plugins_dir }}/XBMCnfoTVImporter.bundle"
-  when: plex_nfo_plugins
-  notify:
-      - Restart Plex

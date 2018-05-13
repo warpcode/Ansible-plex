@@ -1,4 +1,3 @@
 ---
 plex_state: latest
 plex_service_state: started
-plex_nfo_plugins: true
