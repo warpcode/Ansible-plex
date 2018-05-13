@@ -1,0 +1,16 @@
+---
+- name: Checking repository key
+  apt_key:
+    url: "https://downloads.plex.tv/plex-keys/PlexSign.key"
+    state: present
+
+- name: Checking repository
+  apt_repository:
+    repo: deb https://downloads.plex.tv/repo/deb/ public main
+    state: present
+    filename: 'plexmediaserver'
+    update_cache: true
+    
+- name: Ensure Plex dependencies are installed
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items: "{{ _plex_dependencies }}"

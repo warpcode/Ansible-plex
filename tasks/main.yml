@@ -7,21 +7,11 @@
     - "{{ ansible_os_family }}.yml"
     - "defaults.yml"
 
-- block:
-    - name: Checking repository key
-      apt_key:
-        url: "https://downloads.plex.tv/plex-keys/PlexSign.key"
-        state: present
-    - name: Checking repository
-      apt_repository:
-        repo: deb https://downloads.plex.tv/repo/deb/ public main
-        state: present
-        filename: 'plexmediaserver'
-        update_cache: true
-    - name: Ensure Plex dependencies are installed
-      apt: name={{ item }} state=latest update_cache=yes
-      with_items: "{{ _plex_dependencies }}"
-  when: ansible_os_family == 'Debian'
+- include: "{{ item }}"
+  with_first_found:
+    - "install/{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - "install/{{ ansible_distribution }}.yml"
+    - "install/{{ ansible_os_family }}.yml"
 
 - name: Install Plex
   package: name={{ _plex_package_name }} state={{plex_state}}
